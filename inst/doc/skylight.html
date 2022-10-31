@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Koen Hufkens" />
+
+<meta name="date" content="2022-10-29" />
+
+<title>skylight use</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">skylight use</h1>
+<h4 class="author">Koen Hufkens</h4>
+<h4 class="date">2022-10-29</h4>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check version number</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>process <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(version<span class="sc">$</span>major) <span class="sc">+</span> <span class="fu">as.numeric</span>(version<span class="sc">$</span>minor)<span class="sc">/</span><span class="dv">10</span> <span class="sc">&gt;</span> <span class="fl">4.2</span></span></code></pre></div>
+<div id="single-datetime-and-location" class="section level3">
+<h3>Single date/time and location</h3>
+<p>skylight values can be calculated for a single point and date using
+the below call. This will generate a data frame with model values.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load the library</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skylight)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate sky illuminance values for</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># a single date/time and location</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">skylight</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">longitude =</span> <span class="sc">-</span><span class="fl">135.8</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">latitude =</span> <span class="sc">-</span><span class="fl">23.4</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">date =</span> <span class="fu">as.POSIXct</span>(<span class="st">&quot;1986-12-18 21:00:00&quot;</span>, <span class="at">tz =</span> <span class="st">&quot;GMT&quot;</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">sky_condition =</span> <span class="dv">1</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(df)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   sun_azimuth sun_altitude sun_illuminance moon_azimuth moon_altitude</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         346      89.9565        123786.3          282     -61.99004</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   moon_illuminance moon_fraction total_illuminance</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     1.066142e-27      93.94848          123786.3</span></span></code></pre></div>
+</div>
+<div id="multiple-datestimes-andor-locations" class="section level3">
+<h3>Multiple dates/times and/or locations</h3>
+<p>The skylight function is vectorized, so you can provide vectors of
+input parameters instead of using a loop and the above function
+call.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate a dataset with 15 minute values</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># for approximately two months</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>input <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">longitude =</span> <span class="dv">0</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">latitude =</span> <span class="dv">50</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span>  <span class="fu">as.POSIXct</span>(<span class="st">&quot;2020-06-18 00:00:00&quot;</span>, <span class="at">tz =</span> <span class="st">&quot;GMT&quot;</span>) <span class="sc">+</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">29</span><span class="sc">*</span><span class="dv">24</span><span class="sc">*</span><span class="dv">3600</span>, <span class="dv">1800</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sky_condition =</span> <span class="dv">1</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate sky illuminance values for</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># a single date/time and location</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">skylight</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">longitude =</span> input<span class="sc">$</span>longitude,</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">latitude =</span> input<span class="sc">$</span>latitude,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">date =</span> input<span class="sc">$</span>date,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">sky_condition =</span> <span class="dv">1</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(df))</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   sun_azimuth sun_altitude sun_illuminance moon_azimuth moon_altitude</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         360   -16.627692    2.872734e-05           40    -18.193474</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2           7   -16.349941    3.874383e-05           46    -14.953394</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3          14   -15.476415    9.949008e-05           52    -11.355126</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4          21   -14.029282    4.779034e-04           58     -7.453916</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5          28   -12.043200    4.163346e-03           64     -3.301080</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6          34    -9.561923    6.272634e-02           69      1.419424</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   moon_illuminance moon_fraction total_illuminance</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     7.503453e-14      10.64874      0.0005287273</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     2.407014e-12      10.52276      0.0005387438</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     1.189855e-10      10.39738      0.0005994902</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     8.248541e-09      10.27262      0.0009779116</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     6.409745e-07      10.14848      0.0046639867</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6     1.859100e-05      10.02496      0.0632449283</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co"># previous results are of the same dimension (rows)</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co"># as the input data and can be bound together</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># for easy plotting</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>input <span class="ot">&lt;-</span> <span class="fu">cbind</span>(input, df)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(input) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">as.Date</span>(date),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">as.numeric</span>(<span class="fu">format</span>(date, <span class="st">&quot;%H&quot;</span>)) <span class="sc">+</span> <span class="fu">as.numeric</span>(<span class="fu">format</span>(date, <span class="st">&quot;%M&quot;</span>))<span class="sc">/</span><span class="dv">60</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> <span class="fu">log</span>(total_illuminance)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">option =</span> <span class="st">&quot;B&quot;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Diurnal cycles of total illuminance&quot;</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">&quot;(including the effect of moon contributions)&quot;</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Hour&quot;</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div>
+<p><img src="data:image/png;base64,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l0uXLnl7e1vUa7qmpqb8/PygoCADvgcnHuXl5aWlpeHh4eY25G/cuHFDqVQGBASY2xBNwMEAQETgFhEARORRdrC6urqEhASDi2dnZyclJc2ePXv16tXcJACs0OxWnTlzZv78+YmJiTt37tS3f1m4bUVFRW+88YaGMC8vLykpac6cObt27eKqrqysXLVq1ezZs1etWtXUZOyqMgZYxZKVlaX+ZuLIkSOJiYnPP//8hx9+KJNh5qGJwaPsYMZQVVW1efPmpKSk3bt3u7u7b9++nU9odqtu3br12WefrVu3LjU19c8//zx+/Hin2cPOpp03b96OHTtu3LiRmZmJEGIYZu3atfHx8f/+97979ep1+PDhTrNHnbKysi1btnAOduvWrUOHDn3wwQepqal1dXWHDh3qHDMeCwfLzc1dtWoVm87Kyvroo48QQrdu3Vq5cuV777334osvrly5sri4WL1Ifn7+4MGD/f39bWxsJk2adP36dT6h2a369ddfQ0NDPTw8rKysxo8ff+7cOWOs0mGbNtjZtDk5Oc7OzuHh4TRNv/TSS88884zx9uhlFULo/fffT05OVh+nX1FRERcX5+rqam9vHxERwc3wEJvHwsH4+OOPP2JiYj7//PO+fftqXNKioqIWLVrEpm/evOnn58cnNLtVCoWC66kiSdKwG1fDwM6mLS8vd3R0/OCDD1555ZVt27bRtBlWLlu2bNm3336rPn8kOjr6hRdeqK+vz8nJycjIGDZsWOdY8lg7mI2NzfDhwwmCCAsLa25u1viJnbp29uzZL774YtasWXxCs1v1xBNPXLlypaSkpL6+/siRI8Y/8wgHO5u2qakpOzt71KhRbITZsWNHp9nTIdevX//ss89kMplJxsQJoSutiygQmUwmkUj45p+qv5bo3bs3mw270FVjY2NKSkpNTc26deu8vb11CM1rlb+/f2Ji4qZNmwiCiImJqaqqEm6VvrZpgJ1Na2trO2DAgLCwMITQs88+y93UdZpVOoiIiIiIiDh06FBqauratWsNM0wvHsEItnz58qysLIRQe3s7d3i446G+QoEO5HL56tWrPT09P/74Y86RsEKzW9Xe3j5s2LCtW7du2bLFx8enZ8+eehlmjG3Y2bQ9evTgMlAUZfAyECZpMY7//ve/p06dYtMBAQF37941zCp9eQQdrHfv3tnZ2XK5/OLFi+xZ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" /><!-- --></p>
+<p>Condensing this figure to only the mean half hourly value for a full
+moon captures the contributions of both sun and moon to the diurnal
+profile.</p>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+</div>
+<div id="piped-data-workflow" class="section level3">
+<h3>Piped data workflow</h3>
+<p><code>skylight</code> supports piped data frames with appropriatedly
+named columns as input to the function. This allows for fast processing
+of large data frames, with the added advantage that input parameters are
+returned with the calculated data.</p>
+<p>Note that you need a data frame with the three most basic parameters:
+<strong>longitude</strong>, <strong>latitude</strong>,
+<strong>date</strong>, named as such (all lower case). The function will
+complain if it doesn’t find the required column names. Also note that
+due to the priority of the piped construction over the other parameters
+<strong>all parameters should be named</strong> when calling the
+function in a conventional way.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># recreating the data frame with parameters</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># as before</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>input <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">longitude =</span> <span class="dv">0</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">latitude =</span> <span class="dv">50</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span>  <span class="fu">as.POSIXct</span>(<span class="st">&quot;2020-06-18 00:00:00&quot;</span>, <span class="at">tz =</span> <span class="st">&quot;GMT&quot;</span>) <span class="sc">+</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span><span class="sc">*</span><span class="dv">24</span><span class="sc">*</span><span class="dv">3600</span>, <span class="dv">1800</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">sky_condition =</span> <span class="dv">1</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># but now using the piped approach to calculate</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># all values</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> input <span class="sc">|&gt;</span> <span class="fu">skylight</span>()</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(df))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   longitude latitude                date sky_condition sun_azimuth sun_altitude</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         0       50 2020-06-18 00:00:00             1         360   -16.627692</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         0       50 2020-06-18 00:30:00             1           7   -16.349941</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         0       50 2020-06-18 01:00:00             1          14   -15.476415</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         0       50 2020-06-18 01:30:00             1          21   -14.029282</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5         0       50 2020-06-18 02:00:00             1          28   -12.043200</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6         0       50 2020-06-18 02:30:00             1          34    -9.561923</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   sun_illuminance moon_azimuth moon_altitude moon_illuminance moon_fraction</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2.872734e-05           40    -18.193474     7.503453e-14      10.64874</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3.874383e-05           46    -14.953394     2.407014e-12      10.52276</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    9.949008e-05           52    -11.355126     1.189855e-10      10.39738</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    4.779034e-04           58     -7.453916     8.248541e-09      10.27262</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    4.163346e-03           64     -3.301080     6.409745e-07      10.14848</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    6.272634e-02           69      1.419424     1.859100e-05      10.02496</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   total_illuminance</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1      0.0005287273</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2      0.0005387438</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3      0.0005994902</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      0.0009779116</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      0.0046639867</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6      0.0632449283</span></span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

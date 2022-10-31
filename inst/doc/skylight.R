@@ -1,0 +1,137 @@
+## ----setup, include = FALSE---------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## -----------------------------------------------------------------------------
+# check version number
+process <- as.numeric(version$major) + as.numeric(version$minor)/10 > 4.2
+
+## -----------------------------------------------------------------------------
+# load the library
+library(skylight)
+
+# calculate sky illuminance values for
+# a single date/time and location
+df <- skylight(
+      longitude = -135.8,
+      latitude = -23.4,
+      date = as.POSIXct("1986-12-18 21:00:00", tz = "GMT"),
+      sky_condition = 1
+    )
+
+print(df)
+
+## -----------------------------------------------------------------------------
+# Generate a dataset with 15 minute values
+# for approximately two months
+input <- data.frame(
+  longitude = 0,
+  latitude = 50,
+  date =  as.POSIXct("2020-06-18 00:00:00", tz = "GMT") + seq(0, 29*24*3600, 1800),
+  sky_condition = 1
+)
+
+# calculate sky illuminance values for
+# a single date/time and location
+df <- skylight(
+      longitude = input$longitude,
+      latitude = input$latitude,
+      date = input$date,
+      sky_condition = 1
+    )
+
+print(head(df))
+
+# previous results are of the same dimension (rows)
+# as the input data and can be bound together
+# for easy plotting
+input <- cbind(input, df)
+
+## -----------------------------------------------------------------------------
+library(ggplot2)
+
+ggplot(input) +
+  geom_tile(
+    aes(
+      as.Date(date),
+      as.numeric(format(date, "%H")) + as.numeric(format(date, "%M"))/60,
+      fill = log(total_illuminance)
+    )
+  ) +
+  scale_fill_viridis_c(
+    option = "B"
+  ) +
+  labs(
+    title = "Diurnal cycles of total illuminance",
+    subtitle = "(including the effect of moon contributions)",
+    y = "Hour",
+    x = ""
+  ) +
+  theme(
+    legend.position = "bottom"
+  )
+
+## ----echo = FALSE, warning=FALSE, message=FALSE, eval = process---------------
+library(dplyr)
+library(tidyr)
+
+df <- input |>
+  filter(
+    moon_fraction == 100
+  ) |>
+  mutate(
+    hour = as.numeric(format(date, "%H")),
+    hour = ifelse(hour >= 12, hour - 24, hour)
+  ) |>
+  group_by(hour) |>
+  summarize(
+    sun_illuminance = mean(sun_illuminance),
+    moon_illuminance = mean(moon_illuminance),
+    total_illuminance = mean(total_illuminance),
+    .groups = "drop"
+  ) |>
+  tidyr::pivot_longer(
+    cols = ends_with("illuminance"),
+    names_to = "illuminance"
+  )
+
+p <- ggplot(df) +
+  geom_path(
+    aes(
+      hour,
+      log(value),
+      group = illuminance,
+      colour = illuminance
+    )
+  ) +
+  coord_cartesian(
+    ylim = c(-4, 2),
+    xlim = c(-5, 5)
+  ) +
+  labs(
+    title = "Components of total illuminance",
+    subtitle = "(30min increments during full moon)",
+    x = "Hour (centered on midnight)"
+  )
+
+print(p)
+
+## ----eval = process-----------------------------------------------------------
+# recreating the data frame with parameters
+# as before
+input <- data.frame(
+  longitude = 0,
+  latitude = 50,
+  date =  as.POSIXct("2020-06-18 00:00:00", tz = "GMT") + seq(0, 1*24*3600, 1800),
+  sky_condition = 1
+)
+
+# but now using the piped approach to calculate
+# all values
+
+df <- input |> skylight()
+
+print(head(df))
+

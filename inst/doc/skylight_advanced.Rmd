@@ -1,0 +1,178 @@
+---
+title: "skylight advanced"
+author: "Koen Hufkens"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{skylight advanced}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dpi = 300
+)
+```
+
+## Cloud cover correction
+
+The original implementation of the software allows for a correction of
+illuminance based upon three cloud cover conditions. However, this is in all practical
+sense a simple scaling of the data (see Janiczek and DeYoung 1987). You can either apply this scaling factor, a division by a number greater than 1 using the function itself, or apply it
+post-hoc on the returned values. Below I show an example routine to use the internal scaling,
+using ERA5 total cloud cover (tcc) data.
+
+### Downloading cloud cover data
+
+To provide our analysis with cloud cover data I rely on the BlueGreen Labs 
+[`ecmwfr`](https://github.com/bluegreen-labs/ecmwfr) package. So, I first query some
+total cloud cover data (0 - 1) covering most of Europe.
+
+```{r eval = FALSE}
+library(ecmwfr)
+
+request <- list(
+  product_type = "reanalysis",
+  format = "netcdf",
+  variable = "total_cloud_cover",
+  year = "2021",
+  month = "02",
+  day = "01",
+  time = c("00:00", "01:00", "02:00", "03:00", "04:00",
+           "05:00", "06:00", "07:00", "08:00", "09:00",
+           "10:00", "11:00", "12:00", "13:00", "14:00",
+           "15:00", "16:00", "17:00", "18:00", "19:00",
+           "20:00", "21:00", "22:00", "23:00"),
+  area = c(70, -20, 33, 25),
+  dataset_short_name = "reanalysis-era5-single-levels",
+  target = "era5.nc"
+)
+
+wf_request(
+  user = "xxxx",
+  request = request,
+  transfer = TRUE
+)
+```
+
+Downloaded data can be read with the `terra` package. The above downloaded data is included as a demo
+data set in the package. You can therefore use this included data in this workflow. Check out the `ecmwfr`
+package to download your own custom data.
+
+```{r echo = FALSE}
+library(terra)
+
+# read in data
+era5 <- try(terra::rast(system.file(package = "skylight", "extdata/era5.nc")))
+
+if(inherits(era5, "try-error")){
+  process <- FALSE
+} else {
+  process <- TRUE
+}
+
+# if the file can be read but the version
+# is too old do not process
+v <- (as.numeric(version$major) + as.numeric(version$minor)/10) > 4.2
+process <- all(v, process)
+```
+
+
+```{r eval = FALSE}
+library(terra)
+
+# read in data
+era5 <- terra::rast(system.file(package = "skylight", "extdata/era5.nc"))
+
+# use this command when downloading the data yourself
+# era5 <- terra:rast(file.path(tempdir(),"era5.nc"))
+```
+
+However, the spatial format needs to be converted to a data frame for use
+with the `skylight` package.
+
+```{r eval = process}
+library(dplyr)
+
+# create a data frame with values
+df <- era5 |> 
+  as.data.frame(xy = TRUE) |>
+  rename(
+    longitude = "x",
+    latitude = "y"
+  )
+
+# add the original time stamp
+df$date <- time(era5)
+
+print(head(df))
+```
+
+```{r eval = process}
+library(skylight)
+
+# calculate sky illuminance values for
+# a single date/time and location
+df <- df |>
+  mutate(
+    # values of cloud cover lower than
+    # 30% are considered clear conditions
+    # for the skylight model - adjust tcc values
+    tcc = ifelse(tcc <= 0.3, 1, tcc),
+    # rescale total cloud cover between 1 - 10
+    # the acceptable range for skylight's
+    # sky_condition parameter
+    sky_condition = scales::rescale(df$tcc, to = c(1,10))
+  )
+
+# pipe into skylight
+df <- df |> skylight()
+
+print(head(df))
+```
+
+I can now plot the sky illuminance as corrected for cloud cover using the internal scaling factor. Keep in mind that this is a rather ad-hoc solution. For proper results external empirical relationships should be established between the model response and measured illuminance values under varying cloud cover conditions.
+
+```{r eval = process}
+library(ggplot2)
+library(rnaturalearth)
+
+# country outlines
+outlines <- rnaturalearth::ne_countries(returnclass = "sf")
+
+ggplot(df) +
+  geom_tile(
+    aes(
+      longitude,
+      latitude,
+      fill = log(total_illuminance)
+    )
+  ) +
+  scale_fill_viridis_c(
+    option = "B",
+    name = "Total illuminance (log(lux))"
+  ) +
+  geom_sf(
+    data = outlines,
+    colour = "white",
+    fill = NA
+    ) +
+  coord_sf(
+    xlim = c(-20, 25),
+    ylim = c(33, 70)
+  ) +
+  labs(
+    title = "Total illuminance with spatial variability\n due to cloud cover and location",
+    y = "",
+    x = ""
+  ) +
+  theme(
+    legend.position = "bottom"
+  )
+```
+
+
+
