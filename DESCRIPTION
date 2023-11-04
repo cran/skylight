@@ -1,7 +1,7 @@
 Package: skylight
 Type: Package
 Title: A Simple Sky Illuminance Model
-Version: 1.1
+Version: 1.2
 Authors@R: c(person(
                family = "Hufkens",
                given = "Koen",
@@ -24,9 +24,10 @@ RoxygenNote: 7.2.1
 Suggests: tidyr, rnaturalearth, dplyr, ggplot2, terra, ncdf4, scales,
         rmarkdown, covr, testthat, knitr
 VignetteBuilder: knitr
+Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2022-10-29 11:56:47 UTC; khufkens
+Packaged: 2023-11-04 14:42:13 UTC; khufkens
 Author: Koen Hufkens [aut, cre] (<https://orcid.org/0000-0002-5070-8109>),
   BlueGreen Labs [cph, fnd]
 Repository: CRAN
-Date/Publication: 2022-10-31 13:52:36 UTC
+Date/Publication: 2023-11-04 15:00:02 UTC
